@@ -4,8 +4,10 @@ import { supabase } from './lib/supabase'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import ForgotPassword from './pages/ForgotPassword'
-import Dashboard from './pages/Dashboard'
+import DashboardHome from './pages/DashboardHome'
+import Assets from './pages/Assets'
 import type { Session } from '@supabase/supabase-js'
+import './styles/dashboard.css'
 
 function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -36,6 +38,7 @@ function App() {
 
   return (
     <Routes>
+      {/* Auth Routes */}
       <Route 
         path="/signin" 
         element={session ? <Navigate to="/dashboard" replace /> : <SignIn />} 
@@ -48,12 +51,26 @@ function App() {
         path="/forgot-password" 
         element={session ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} 
       />
+
+      {/* Dashboard Routes */}
       <Route 
         path="/dashboard" 
-        element={session ? <Dashboard session={session} /> : <Navigate to="/signin" replace />} 
+        element={session ? <DashboardHome session={session} /> : <Navigate to="/signin" replace />} 
       />
       <Route 
+        path="/assets" 
+        element={session ? <Assets session={session} /> : <Navigate to="/signin" replace />} 
+      />
+
+      {/* Default Route */}
+      <Route 
         path="/" 
+        element={<Navigate to={session ? "/dashboard" : "/signin"} replace />} 
+      />
+
+      {/* Catch all */}
+      <Route 
+        path="*" 
         element={<Navigate to={session ? "/dashboard" : "/signin"} replace />} 
       />
     </Routes>
@@ -61,4 +78,3 @@ function App() {
 }
 
 export default App
-
