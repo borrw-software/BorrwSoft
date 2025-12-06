@@ -126,6 +126,7 @@ export type Database = {
           id: string
           organisation_id: string | null
           organisation_name: string
+          role: Database["public"]["Enums"]["user_role"]
           updated_at: string
         }
         Insert: {
@@ -134,6 +135,7 @@ export type Database = {
           id: string
           organisation_id?: string | null
           organisation_name: string
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Update: {
@@ -142,6 +144,7 @@ export type Database = {
           id?: string
           organisation_id?: string | null
           organisation_name?: string
+          role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
         }
         Relationships: [
@@ -200,6 +203,7 @@ export type Database = {
         | "in_maintenance"
         | "lost"
         | "damaged"
+      user_role: "admin" | "user" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -226,6 +230,16 @@ export type AssetSummary = Database['public']['Views']['asset_summary']['Row']
 export type AssetCategory = Database['public']['Enums']['asset_category']
 export type AssetStatus = Database['public']['Enums']['asset_status']
 export type AssetCondition = Database['public']['Enums']['asset_condition']
+export type UserRole = Database['public']['Enums']['user_role']
+
+// Role constants
+export const USER_ROLES: UserRole[] = ['admin', 'user', 'viewer']
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  admin: 'Admin',
+  user: 'User',
+  viewer: 'Viewer'
+}
 
 // Constants for dropdowns/selects
 export const ASSET_CATEGORIES: AssetCategory[] = ['equipment', 'car', 'electronics']

@@ -398,3 +398,87 @@ body {
   padding: 0 24px;
 }
 
+/* Auth Container (for AccessDenied page) */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--bg-primary);
+}
+
+.auth-button {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: var(--font-family);
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.auth-button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Responsive - Auth Pages */
+@media (max-width: 640px) {
+  .auth-layout {
+    padding: 16px;
+  }
+  
+  .auth-card {
+    padding: 28px 24px;
+  }
+  
+  .auth-title {
+    font-size: 1.5rem;
+  }
+  
+  .auth-subtitle {
+    font-size: 0.875rem;
+  }
+  
+  .form-input {
+    height: 52px;
+    font-size: 1rem;
+  }
+  
+  .btn {
+    height: 52px;
+    font-size: 1rem;
+  }
+  
+  .auth-button {
+    height: 52px;
+    font-size: 1rem;
+  }
+  
+  .auth-container {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 380px) {
+  .auth-card {
+    padding: 24px 20px;
+  }
+  
+  .auth-title {
+    font-size: 1.375rem;
+  }
+  
+  .logo-text {
+    font-size: 1.25rem;
+  }
+}
+

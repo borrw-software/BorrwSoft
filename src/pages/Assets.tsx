@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Plus, Search, Package, MoreHorizontal, Edit, Trash2, Eye } from 'lucide-react'
+import { Plus, Search, Package, Edit, Trash2, QrCode } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { Asset, Profile } from '../lib/database.types'
 import { STATUS_LABELS, CATEGORY_LABELS, CONDITION_LABELS } from '../lib/database.types'
 import DashboardLayout from '../components/DashboardLayout'
 import AddAssetModal from '../components/AddAssetModal'
+import EditAssetModal from '../components/EditAssetModal'
 import type { Session } from '@supabase/supabase-js'
 
 interface AssetsProps {
@@ -17,6 +18,7 @@ export default function Assets({ session }: AssetsProps) {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [editingAsset, setEditingAsset] = useState<Asset | null>(null)
 
   useEffect(() => {
     loadData()
@@ -65,6 +67,11 @@ export default function Assets({ session }: AssetsProps) {
   const handleAssetAdded = (newAsset: Asset) => {
     setAssets(prev => [newAsset, ...prev])
     setShowAddModal(false)
+  }
+
+  const handleAssetUpdated = (updatedAsset: Asset) => {
+    setAssets(prev => prev.map(a => a.id === updatedAsset.id ? updatedAsset : a))
+    setEditingAsset(null)
   }
 
   const handleDeleteAsset = async (assetId: string) => {
@@ -235,6 +242,13 @@ export default function Assets({ session }: AssetsProps) {
                       <div style={{ display: 'flex', gap: '4px' }}>
                         <button 
                           className="btn btn-ghost btn-icon btn-sm"
+                          title="Edit & QR Code"
+                          onClick={() => setEditingAsset(asset)}
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button 
+                          className="btn btn-ghost btn-icon btn-sm"
                           title="Delete"
                           onClick={() => handleDeleteAsset(asset.id)}
                         >
@@ -259,7 +273,19 @@ export default function Assets({ session }: AssetsProps) {
           onAssetAdded={handleAssetAdded}
         />
       )}
+
+      {/* Edit Asset Modal */}
+      {editingAsset && profile?.organisation_id && (
+        <EditAssetModal
+          asset={editingAsset}
+          organisationId={profile.organisation_id}
+          onClose={() => setEditingAsset(null)}
+          onAssetUpdated={handleAssetUpdated}
+        />
+      )}
     </DashboardLayout>
   )
 }
+
+
 

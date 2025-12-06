@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { 
   LayoutDashboard, 
@@ -7,7 +8,8 @@ import {
   FileText, 
   Settings,
   LogOut,
-  Menu
+  Menu,
+  X
 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import type { Profile } from '../lib/database.types'
@@ -28,6 +30,33 @@ const navigation = [
 export default function DashboardLayout({ children, profile }: DashboardLayoutProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Close sidebar when route changes
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
+
+  // Close sidebar when pressing Escape
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false)
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [])
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [sidebarOpen])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -45,8 +74,14 @@ export default function DashboardLayout({ children, profile }: DashboardLayoutPr
 
   return (
     <div className="dashboard-layout">
+      {/* Mobile Overlay */}
+      <div 
+        className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+      />
+
       {/* Sidebar */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <Link to="/dashboard" className="sidebar-brand">
             <div className="sidebar-logo">
@@ -90,9 +125,24 @@ export default function DashboardLayout({ children, profile }: DashboardLayoutPr
 
       {/* Main Content */}
       <main className="main-content">
-        {children}
+        {/* Inject mobile toggle function to children */}
+        {typeof children === 'function' 
+          ? children({ toggleSidebar: () => setSidebarOpen(prev => !prev) })
+          : children
+        }
       </main>
+
+      {/* Fixed Mobile Menu Toggle */}
+      <button 
+        className="mobile-menu-toggle mobile-menu-fixed"
+        onClick={() => setSidebarOpen(prev => !prev)}
+        aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+      >
+        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
     </div>
   )
 }
+
+
 
